@@ -1,0 +1,33 @@
+services:
+  aliexpress_api:
+    build: .
+    container_name: aliexpress_api
+    ports:
+      - "8000:8000"
+    environment:
+      RAPIDAPI_KEY: 708b2a8b97msh1629e0bebcfc5fcp1aa461jsnf68afc6f5a0d
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    command:
+      - start
+      - --all
+      - --config
+      - /etc/ngrok.yml
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml:ro
+    ports:
+      - "4040:4040"  
+    depends_on:
+      - aliexpress_api
+    restart: unless-stopped
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
